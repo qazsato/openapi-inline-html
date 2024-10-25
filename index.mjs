@@ -3,9 +3,14 @@ import { program } from 'commander'
 import inquirer from 'inquirer'
 import fs from 'fs'
 import ejs from 'ejs'
+import path from 'path'
+import { fileURLToPath } from 'url'
 
 const UI = ['stoplight']
 const THEME = ['light', 'dark']
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 // Define CLI options
 program
@@ -61,11 +66,14 @@ async function main() {
   const ui = options.ui || answers.ui
   const theme = options.theme || answers.theme
   const title = options.title || answers.title
-  const template = fs.readFileSync(`./resources/${ui}/template.ejs`, 'utf-8')
-  const cssContent = fs.readFileSync(`./resources/${ui}/index.css`, 'utf-8')
-  const jsContent = fs.readFileSync(`./resources/${ui}/index.js`, 'utf-8')
+
+  const template = fs.readFileSync(path.resolve(__dirname, `./resources/${ui}/template.ejs`), 'utf-8')
+  const cssContent = fs.readFileSync(path.resolve(__dirname, `./resources/${ui}/index.css`), 'utf-8')
+  const jsContent = fs.readFileSync(path.resolve(__dirname, `./resources/${ui}/index.js`), 'utf-8')
+
   const input = options.input || answers.input
   const apiDocs = fs.readFileSync(input, 'utf-8')
+
   const htmlContent = ejs.render(template, {
     theme,
     title,
