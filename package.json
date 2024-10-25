@@ -1,13 +1,13 @@
 {
-  "name": "openapi-static-html",
+  "name": "openapi-inline-html",
   "version": "0.0.1",
-  "description": "Generate static HTML documentation from OpenAPI spec",
+  "description": "Generate inline HTML documentation from OpenAPI spec",
   "bin": {
-    "openapi-static-html": "./index.mjs"
+    "openapi-inline-html": "./index.mjs"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/qazsato/openapi-static-html.git"
+    "url": "https://github.com/qazsato/openapi-inline-html.git"
   },
   "keywords": [
     "OpenAPI",
