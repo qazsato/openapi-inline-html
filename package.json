@@ -1,6 +1,6 @@
 {
   "name": "openapi-inline-html",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Generate inline HTML documentation from OpenAPI spec",
   "bin": {
     "openapi-inline-html": "./index.mjs"
