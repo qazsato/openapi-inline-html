@@ -1,0 +1,16 @@
+.elements-api {
+  > div {
+    height: 100vh !important;
+  }
+}
+
+[data-theme=dark] {
+  .sl-code-highlight {
+    .token {
+      color: #fff !important;
+    }
+  }
+  .sl-elements-api {
+    background-color: var(--color-canvas-pure);
+  }
+}
