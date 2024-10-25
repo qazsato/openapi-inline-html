@@ -1,6 +1,6 @@
 # openapi-inline-html
 
-Generate inline HTML documentation from OpenAPI spec. 📗✨
+Generate standalone HTML from OpenAPI Specification. 📗✨
 
 ## Feature
 
@@ -32,7 +32,7 @@ npx openapi-inline-html -i openapi.json --theme=dark
 | ------------- | -------------- | -------------------------------------------------- |
 | --input (-i)  |                | Input OpenAPI JSON file path                       |
 | --output (-o) | "openapi.html" | Output HTML file name                              |
-| --ui          | "stoplight"    | Choose UI (stoplight)                              |
+| --ui          | "stoplight"    | Choose UI (stoplight / swagger)                    |
 | --theme       | "light"        | Theme of the HTML page. Choose from light or dark. |
 | --title       | "OpenAPI Docs" | Title of the HTML page                             |
 

@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="light">
+<head>
+  <title>OpenAPI Docs</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui.css" />
+  <style></style>
+  <script></script>
+</head>
+<body>
+  <div id="swagger-ui"></div>
+  <script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-bundle.js" crossorigin></script>
+  <script>
+    /* ref. https://swagger.io/docs/open-source-tools/swagger-ui/usage/installation/ */
+    window.onload = () => {
+      window.ui = SwaggerUIBundle({
+        spec: {
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Cork API",
+    "version": "v1",
+    "description": "[CorkMap](https://corkmap.jp) で利用する REST API",
+    "x-logo": {
+      "url": "https://corkmap.jp/favicon.svg"
+    },
+    "contact": {}
+  },
+  "servers": [
+    {
+      "description": "prod",
+      "url": "https://api.corkmap.jp/v1"
+    },
+    {
+      "description": "dev",
+      "url": "https://dev.api.corkmap.jp/v1"
+    },
+    {
+      "url": "http://localhost:4000/v1",
+      "description": "local"
+    }
+  ],
+  "paths": {
+    "/me/schools": {
+      "get": {
+        "summary": "Get User's All Saved Schools",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/School"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-schools",
+        "description": "お気に入りの学校一覧を取得する",
+        "security": [
+          {
+            "IDToken": []
+          }
+        ],
+        "tags": [
+          "schools"
+        ]
+      },
+      "post": {
+        "summary": "Save School for Current User",
+        "operationId": "post-schools",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {}
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "error": {
+                        "type": "plan_limit_exceeded",
+                        "message": "登録上限に達しています"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "お気に入りの学校を登録する\n\n|        | FREE | PRO    |\n| ------ | ---- | ------ |\n| 登録上限 | 3件　 | 100件　 |",
+        "security": [
+          {
+            "IDToken": []
+          }
+        ],
+        "tags": [
+          "schools"
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/school"
+        }
+      },
+      "parameters": []
+    },
+    "/me/schools/{code}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "code",
+          "in": "path",
+          "required": true,
+          "description": "学校コード"
+        }
+      ],
+      "get": {
+        "summary": "Get User's Saved School",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/School"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-schools-code",
+        "description": "指定のお気に入りの学校を取得する",
+        "security": [
+          {
+            "IDToken": []
+          }
+        ],
+        "tags": [
+          "schools"
+        ]
+      },
+      "delete": {
+        "summary": "Remove User's Saved School",
+        "operationId": "delete-schools-code",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "schools"
+        ],
+        "description": "指定のお気に入りの学校を削除する",
+        "security": [
+          {
+            "IDToken": []
+          }
+        ]
+      }
+    },
+    "/me/stripe/checkout/sessions": {
+      "post": {
+        "summary": "Create User's Stripe Checkout Session",
+        "operationId": "post-stripe-checkout-sessions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "client_secret": {
+                      "type": "string",
+                      "x-stoplight": {
+                        "id": "4ohiv8ldlcrdk"
+                      },
+                      "description": "Stripe Checkout 初期化時に使用されるクライアントシークレット"
+                    }
+                  },
+                  "required": [
+                    "client_secret"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "error": {
+                        "type": "plan_limit_exceeded",
+                        "message": "登録上限に達しています"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "定期購読用のクライアントシークレットを発行\n\n- [Checkout セッションを作成する](https://docs.stripe.com/billing/subscriptions/build-subscriptions?ui=stripe-hosted&locale=ja-JP#create-session)\n- [オンラインフォーム](https://docs.stripe.com/checkout/embedded/quickstart?locale=ja-JP)",
+        "security": [
+          {
+            "IDToken": []
+          }
+        ],
+        "tags": [
+          "stripe"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "plan": {
+                    "type": "string",
+                    "x-stoplight": {
+                      "id": "dlchbxa504cx4"
+                    },
+                    "description": "プラン",
+                    "enum": [
+                      "pro",
+                      "basic"
+                    ]
+                  }
+                },
+                "required": [
+                  "plan"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "parameters": []
+    },
+    "/me/stripe/billing_portal/sessions": {
+      "post": {
+        "summary": "Create User's Stripe Portal Session",
+        "operationId": "post-stripe-billing_portal-sessions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "redirect_url": {
+                      "type": "string",
+                      "x-stoplight": {
+                        "id": "4ohiv8ldlcrdk"
+                      },
+                      "description": "stripe のリダイレクト URL"
+                    }
+                  },
+                  "required": [
+                    "redirect_url"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "error": {
+                        "type": "plan_limit_exceeded",
+                        "message": "登録上限に達しています"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "カスタマーポータルの URL を発行\n\n[カスタマーポータルを設定する](https://docs.stripe.com/billing/subscriptions/build-subscriptions?ui=stripe-hosted&locale=ja-JP#configure-portal)",
+        "security": [
+          {
+            "IDToken": []
+          }
+        ],
+        "tags": [
+          "stripe"
+        ]
+      },
+      "parameters": []
+    },
+    "/stripe/webhook": {
+      "post": {
+        "summary": "Webhook for Stripe Event",
+        "operationId": "post-stripe-webhook",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {},
+            "headers": {}
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "error": {
+                        "type": "plan_limit_exceeded",
+                        "message": "登録上限に達しています"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "| イベント                                       | 処理 |\n| -------------------------------------------- | --- |\n| checkout.session.completed                   | ◯　 |\n| customer.subscription.created                |     |\n| customer.subscription.updated                |     |\n| customer.subscription.paused                 |     |\n| customer.subscription.resumed                |     |\n| customer.subscription.trial_will_end         |     |\n| customer.subscription.pending_update_applied |     |\n| customer.subscription.pending_update_expired |     |\n| customer.subscription.deleted                | ◯　 |\n\n- [Types of events](https://docs.stripe.com/api/events/types)\n- [サブスクリプションの Webhook イベント](https://docs.stripe.com/billing/subscriptions/webhooks#events)",
+        "tags": [
+          "stripe"
+        ]
+      },
+      "parameters": []
+    },
+    "/maps/embed": {
+      "get": {
+        "summary": "Redirect Embed Maps Page",
+        "responses": {
+          "301": {
+            "description": "Moved Permanently"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-maps-embed",
+        "description": "埋め込み地図の URL にリダイレクトする\n\n例）\n\n```html\n<iframe\n  width=\"450\"\n  height=\"250\"\n  frameborder=\"0\" style=\"border:0\"\n  referrerpolicy=\"no-referrer-when-downgrade\"\n  src=\"https://api.corkmap.jp/v1/maps/embed?code=B113210100059\"\n  allowfullscreen>\n</iframe>\n```\n\n- [Google Maps Platform](https://developers.google.com/maps/documentation/embed/embedding-map?_gl=1*wqwwnh*_up*MQ..*_ga*ODY0MjQwMjU0LjE3MTEyNDY3NTk.*_ga_NRWSTWS78N*MTcxMTI0Njc1OS4xLjAuMTcxMTI0Njc1OS4wLjAuMA..&hl=ja)\n- [mapbox](https://docs.mapbox.com/jp/help/glossary/iframe/)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "key",
+            "description": "APIキー",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "code",
+            "description": "学区コード",
+            "required": true
+          }
+        ],
+        "tags": [
+          "maps"
+        ]
+      },
+      "parameters": []
+    },
+    "/maps/embed/keys/{key}/status": {
+      "get": {
+        "summary": "Get Embed Maps Key Status",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "x-stoplight": {
+                        "id": "dh2best6751b7"
+                      },
+                      "enum": [
+                        "valid",
+                        "invalid"
+                      ],
+                      "description": "API キーのステータス"
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-maps-embed-keys-key-status",
+        "description": "埋め込み地図の API キーのステータスを取得する",
+        "parameters": [],
+        "tags": [
+          "maps"
+        ]
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "key",
+          "in": "path",
+          "required": true,
+          "description": "APIキー"
+        }
+      ]
+    },
+    "/news/overview": {
+      "get": {
+        "summary": "Get News Overview",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "latest_news": {
+                      "$ref": "#/components/schemas/News",
+                      "x-stoplight": {
+                        "id": "wj0kgm1fb8hu6"
+                      },
+                      "description": "最新ニュース"
+                    },
+                    "banner_news": {
+                      "$ref": "#/components/schemas/News",
+                      "x-stoplight": {
+                        "id": "pav931mmibmas"
+                      },
+                      "description": "バナーニュース"
+                    }
+                  },
+                  "required": [
+                    "latest_news",
+                    "banner_news"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-news-overview",
+        "description": "お知らせ概要を取得する",
+        "parameters": [],
+        "tags": [
+          "news"
+        ]
+      },
+      "parameters": []
+    }
+  },
+  "components": {
+    "schemas": {
+      "School": {
+        "title": "School",
+        "x-stoplight": {
+          "id": "bhpnxzprfz0sx"
+        },
+        "type": "object",
+        "examples": [
+          {
+            "code": "B113210100059",
+            "created_at": "2024-02-06T23:52:45.368Z"
+          }
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "upkyv8dcjktaz"
+            },
+            "description": "学校コード"
+          },
+          "created_at": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "9uveaa332bfly"
+            },
+            "description": "登録日 (ISO8601)"
+          }
+        },
+        "required": [
+          "code",
+          "created_at"
+        ]
+      },
+      "News": {
+        "title": "News",
+        "x-stoplight": {
+          "id": "2nga67ovuik7e"
+        },
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "コンテンツID"
+          },
+          "type": {
+            "type": "array",
+            "x-stoplight": {
+              "id": "k3cmxyvc27a19"
+            },
+            "enum": [
+              "info",
+              "warning",
+              "important"
+            ],
+            "description": "種別",
+            "items": {
+              "x-stoplight": {
+                "id": "3fzgf8uyb2znt"
+              },
+              "type": "string",
+              "enum": [
+                "info",
+                "warning",
+                "important"
+              ]
+            }
+          },
+          "title": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "04pd5l7mi5qq7"
+            },
+            "description": "タイトル"
+          },
+          "content": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "cw363x6zecqng"
+            },
+            "description": "コンテンツ (HTML文字列)"
+          },
+          "datetime": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "az3gr84rq2diq"
+            },
+            "description": "表示日時 (ISO8601)"
+          }
+        }
+      },
+      "Error": {
+        "title": "Error",
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": [
+              "type",
+              "message"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "x-stoplight": {
+                  "id": "bh7dmhzqvcjb8"
+                },
+                "description": "エラー種別"
+              },
+              "message": {
+                "type": "string",
+                "description": "エラーメッセージ"
+              }
+            }
+          }
+        },
+        "required": [
+          "error"
+        ]
+      }
+    },
+    "securitySchemes": {
+      "IDToken": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "JWT 形式の ID トークン"
+      }
+    },
+    "requestBodies": {
+      "school": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "x-stoplight": {
+                    "id": "lwjkv6fkiem1a"
+                  },
+                  "description": "学校コード"
+                }
+              },
+              "required": [
+                "code"
+              ]
+            },
+            "examples": {
+              "Example 1": {
+                "value": {
+                  "code": "B113210100059"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "responses": {}
+  },
+  "tags": [
+    {
+      "name": "maps"
+    },
+    {
+      "name": "news"
+    },
+    {
+      "name": "schools"
+    },
+    {
+      "name": "stripe"
+    }
+  ]
+},
+        dom_id: '#swagger-ui',
+      });
+    };
+  </script>
+</body>
+</html>
