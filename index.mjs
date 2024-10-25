@@ -8,7 +8,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import $RefParser from "@apidevtools/json-schema-ref-parser";
 
-const UI = ['stoplight', 'swagger']
+const UI = ['stoplight', 'swagger', 'redoc']
 const THEME = ['light', 'dark']
 const ENABLE_INPUT_EXTS = ['.json', '.yaml', '.yml']
 
@@ -21,7 +21,7 @@ program
   .option('-o, --output <output>', 'Output HTML file name', 'openapi.html')
   .option('--ui <ui>', `Choose UI (${UI.join(', ')})`)
   .option('--title <title>', 'Title of the HTML page', 'OpenAPI Docs')
-  .option('--theme <theme>', 'Theme of the HTML page. Choose from light or dark.')
+  .option('--theme <theme>', 'Theme of the HTML page. Choose from light or dark.', THEME[0])
   .parse(process.argv)
 
 async function main() {
@@ -38,14 +38,6 @@ async function main() {
       default: UI[0],
       choices: UI,
       when: !options.ui,
-    },
-    {
-      type: 'list',
-      name: 'theme',
-      message: 'Choose a theme:',
-      default: THEME[0],
-      choices: THEME,
-      when: !options.theme,
     },
     {
       type: 'input',
@@ -67,8 +59,8 @@ async function main() {
 
   // 3. bundle HTML file based on the UI
   const ui = options.ui || answers.ui
-  const theme = options.theme || answers.theme
-  const title = options.title || answers.title
+  const theme = options.theme
+  const title = options.title
 
   const template = fs.readFileSync(path.resolve(__dirname, `./resources/${ui}/template.ejs`), 'utf-8')
   const cssContent = fs.readFileSync(path.resolve(__dirname, `./resources/${ui}/index.css`), 'utf-8')

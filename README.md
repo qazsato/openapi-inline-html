@@ -22,19 +22,22 @@ npx openapi-inline-html -i openapi.json
 
 Use Dark theme 🌙
 
+> [!NOTE]
+> The dark theme is an experimental feature 🧪
+
 ```bash
 npx openapi-inline-html -i openapi.json --theme=dark
 ```
 
 ## CLI Options
 
-| command       | default        | description                                        |
-| ------------- | -------------- | -------------------------------------------------- |
-| --input (-i)  |                | Input OpenAPI JSON / YAML file path                |
-| --output (-o) | "openapi.html" | Output HTML file name                              |
-| --ui          | "stoplight"    | Choose UI (stoplight / swagger)                    |
-| --theme       | "light"        | Theme of the HTML page. Choose from light or dark. |
-| --title       | "OpenAPI Docs" | Title of the HTML page                             |
+| command       | default        | description                             |
+| ------------- | -------------- | --------------------------------------- |
+| --input (-i)  |                | Input OpenAPI JSON / YAML file path     |
+| --output (-o) | "openapi.html" | Output HTML file name                   |
+| --ui          | "stoplight"    | Choose UI (stoplight / swagger / redoc) |
+| --theme       | "light"        | Choose Theme (light / dark)             |
+| --title       | "OpenAPI Docs" | Title of the HTML page                  |
 
 ## License
 
