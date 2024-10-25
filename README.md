@@ -22,12 +22,12 @@ npx openapi-inline-html -i openapi.json
 
 Use Dark theme 🌙
 
-> [!NOTE]
-> The dark theme is an experimental feature 🧪
-
 ```bash
 npx openapi-inline-html -i openapi.json --theme=dark
 ```
+
+> [!NOTE]
+> The dark theme is an experimental feature 🧪
 
 ## CLI Options
 
