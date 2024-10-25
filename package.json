@@ -2,6 +2,9 @@
   "name": "openapi-static-html",
   "version": "0.0.1",
   "description": "Generate static HTML documentation from OpenAPI spec",
+  "bin": {
+    "openapi-static-html": "./index.mjs"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/qazsato/openapi-static-html.git"
