@@ -5,8 +5,9 @@ import fs from 'fs'
 import ejs from 'ejs'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import $RefParser from "@apidevtools/json-schema-ref-parser";
 
-const UI = ['stoplight']
+const UI = ['stoplight', 'swagger']
 const THEME = ['light', 'dark']
 
 const __filename = fileURLToPath(import.meta.url)
@@ -72,14 +73,15 @@ async function main() {
   const jsContent = fs.readFileSync(path.resolve(__dirname, `./resources/${ui}/index.js`), 'utf-8')
 
   const input = options.input || answers.input
-  const apiDocs = fs.readFileSync(input, 'utf-8')
+  const rawApiDocs = JSON.parse(fs.readFileSync(input, 'utf-8'))
+  const apiDocs = await $RefParser.dereference(rawApiDocs) // resolve $ref
 
   const htmlContent = ejs.render(template, {
     theme,
     title,
     jsContent,
     cssContent,
-    apiDocs
+    apiDocs: JSON.stringify(apiDocs),
   })
 
   // 4. write the HTML file

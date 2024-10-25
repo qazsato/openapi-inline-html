@@ -1,0 +1,14 @@
+/* https://github.com/swagger-api/swagger-ui/issues/5327#issuecomment-742375520 */
+html[data-theme="dark"] {
+  body {
+    background: black;
+  }
+
+  .swagger-ui {
+    filter: invert(88%) hue-rotate(180deg);
+  }
+
+  .swagger-ui .microlight {
+      filter: invert(100%) hue-rotate(180deg);
+  }
+}
