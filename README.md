@@ -30,7 +30,7 @@ npx openapi-inline-html -i openapi.json --theme=dark
 
 | command       | default        | description                                        |
 | ------------- | -------------- | -------------------------------------------------- |
-| --input (-i)  |                | Input OpenAPI JSON file path                       |
+| --input (-i)  |                | Input OpenAPI JSON / YAML file path                |
 | --output (-o) | "openapi.html" | Output HTML file name                              |
 | --ui          | "stoplight"    | Choose UI (stoplight / swagger)                    |
 | --theme       | "light"        | Theme of the HTML page. Choose from light or dark. |

@@ -2,6 +2,7 @@
 import { program } from 'commander'
 import inquirer from 'inquirer'
 import fs from 'fs'
+import yaml from 'js-yaml'
 import ejs from 'ejs'
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -9,13 +10,14 @@ import $RefParser from "@apidevtools/json-schema-ref-parser";
 
 const UI = ['stoplight', 'swagger']
 const THEME = ['light', 'dark']
+const ENABLE_INPUT_EXTS = ['.json', '.yaml', '.yml']
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 // Define CLI options
 program
-  .option('-i, --input <input>', 'Input OpenAPI JSON file')
+  .option('-i, --input <input>', 'Input OpenAPI JSON / YAML file')
   .option('-o, --output <output>', 'Output HTML file name', 'openapi.html')
   .option('--ui <ui>', `Choose UI (${UI.join(', ')})`)
   .option('--title <title>', 'Title of the HTML page', 'OpenAPI Docs')
@@ -50,7 +52,7 @@ async function main() {
       name: 'input',
       message: 'Please provide the path to your OpenAPI JSON file:',
       default: './openapi.json',
-      validate: (input) => input.endsWith('.json') || 'File must be a JSON file!',
+      validate: (input) => ENABLE_INPUT_EXTS.some(ext => input.endsWith(ext)) || 'File must be a JSON or YAML file!',
       when: !options.input,
     },
     {
@@ -73,7 +75,17 @@ async function main() {
   const jsContent = fs.readFileSync(path.resolve(__dirname, `./resources/${ui}/index.js`), 'utf-8')
 
   const input = options.input || answers.input
-  const rawApiDocs = JSON.parse(fs.readFileSync(input, 'utf-8'))
+  const rawApiDocsText = fs.readFileSync(input, 'utf-8')
+  const fileExtension = path.extname(input).toLowerCase()
+  let rawApiDocs
+  if (fileExtension === '.json') {
+    rawApiDocs = JSON.parse(rawApiDocsText)
+  } else if (fileExtension === '.yaml' || fileExtension === '.yml') {
+    rawApiDocs = yaml.load(rawApiDocsText)
+  } else {
+    throw new Error('Unsupported file format. Please provide a .json or .yaml/.yml file.');
+  }
+
   const apiDocs = await $RefParser.dereference(rawApiDocs) // resolve $ref
 
   const htmlContent = ejs.render(template, {
@@ -96,8 +108,8 @@ function validateOptions(options) {
     process.exit(1)
   }
 
-  if (options.input && !options.input.endsWith('.json')) {
-    console.error(`Invalid input file (${options.input}). Must be a JSON file.`)
+  if (options.input && !ENABLE_INPUT_EXTS.some(ext => options.input.endsWith(ext))) {
+    console.error(`Invalid input file (${options.input}). Must be a JSON or YAML file.`)
     process.exit(1)
   }
 
