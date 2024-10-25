@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="<%= theme %>">
+<head>
+  <title><%= title %></title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/@stoplight/elements/styles.min.css">
+  <script src="https://unpkg.com/@stoplight/elements/web-components.min.js"></script>
+  <style><%- cssContent %></style>
+  <script><%- jsContent %></script>
+</head>
+<body>
+  <elements-api router="hash" class="elements-api"></elements-api>
+  <script>
+    /* ref. https://github.com/stoplightio/elements/blob/main/docs/getting-started/elements/html.md#examples */
+    (async () => {
+      const docs = document.querySelector('.elements-api');
+      const apiDescriptionDocument = <%- apiDocs %>;
+      docs.apiDescriptionDocument = apiDescriptionDocument;
+    })();
+  </script>
+</body>
+</html>

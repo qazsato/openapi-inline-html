@@ -1,14 +1,18 @@
 import { program } from 'commander'
 import inquirer from 'inquirer'
+import fs from 'fs'
+import ejs from 'ejs'
+
 const UI = ['stoplight']
+const THEME = ['light', 'dark']
 
 // Define CLI options
 program
   .option('-i, --input <input>', 'Input OpenAPI JSON file')
   .option('-o, --output <output>', 'Output HTML file name', 'openapi.html')
   .option('--ui <ui>', `Choose UI (${UI.join(', ')})`)
-  .option('--title <title>', 'Title of the HTML page', 'OpenAPI Documentation')
-  .option('--theme <theme>', 'Theme of the HTML page. Choose from light or dark.', 'light')
+  .option('--title <title>', 'Title of the HTML page', 'OpenAPI Docs')
+  .option('--theme <theme>', 'Theme of the HTML page. Choose from light or dark.')
   .parse(process.argv)
 
 async function main() {
@@ -25,6 +29,14 @@ async function main() {
       default: UI[0],
       choices: UI,
       when: !options.ui,
+    },
+    {
+      type: 'list',
+      name: 'theme',
+      message: 'Choose a theme:',
+      default: THEME[0],
+      choices: THEME,
+      when: !options.theme,
     },
     {
       type: 'input',
@@ -46,8 +58,25 @@ async function main() {
 
   // 3. bundle HTML file based on the UI
   const ui = options.ui || answers.ui
+  const theme = options.theme || answers.theme
+  const title = options.title || answers.title
+  const template = fs.readFileSync(`./resources/${ui}/template.ejs`, 'utf-8')
+  const cssContent = fs.readFileSync(`./resources/${ui}/index.css`, 'utf-8')
+  const jsContent = fs.readFileSync(`./resources/${ui}/index.js`, 'utf-8')
   const input = options.input || answers.input
+  const apiDocs = fs.readFileSync(input, 'utf-8')
+  const htmlContent = ejs.render(template, {
+    theme,
+    title,
+    jsContent,
+    cssContent,
+    apiDocs
+  })
+
+  // 4. write the HTML file
   const output = options.output || answers.output
+  fs.writeFileSync(output, htmlContent, 'utf-8')
+  console.log(`✅ HTML file generated: ${output}`)
 }
 
 function validateOptions(options) {
