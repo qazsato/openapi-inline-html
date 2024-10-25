@@ -6,9 +6,9 @@ import yaml from 'js-yaml'
 import ejs from 'ejs'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import $RefParser from "@apidevtools/json-schema-ref-parser";
+import $RefParser from '@apidevtools/json-schema-ref-parser'
 
-const UI = ['stoplight', 'swagger']
+const UI = ['stoplight', 'swagger', 'redoc']
 const THEME = ['light', 'dark']
 const ENABLE_INPUT_EXTS = ['.json', '.yaml', '.yml']
 
@@ -21,7 +21,11 @@ program
   .option('-o, --output <output>', 'Output HTML file name', 'openapi.html')
   .option('--ui <ui>', `Choose UI (${UI.join(', ')})`)
   .option('--title <title>', 'Title of the HTML page', 'OpenAPI Docs')
-  .option('--theme <theme>', 'Theme of the HTML page. Choose from light or dark.')
+  .option(
+    '--theme <theme>',
+    'Theme of the HTML page. Choose from light or dark.',
+    THEME[0],
+  )
   .parse(process.argv)
 
 async function main() {
@@ -40,19 +44,13 @@ async function main() {
       when: !options.ui,
     },
     {
-      type: 'list',
-      name: 'theme',
-      message: 'Choose a theme:',
-      default: THEME[0],
-      choices: THEME,
-      when: !options.theme,
-    },
-    {
       type: 'input',
       name: 'input',
       message: 'Please provide the path to your OpenAPI JSON file:',
       default: './openapi.json',
-      validate: (input) => ENABLE_INPUT_EXTS.some(ext => input.endsWith(ext)) || 'File must be a JSON or YAML file!',
+      validate: (input) =>
+        ENABLE_INPUT_EXTS.some((ext) => input.endsWith(ext)) ||
+        'File must be a JSON or YAML file!',
       when: !options.input,
     },
     {
@@ -60,19 +58,29 @@ async function main() {
       name: 'output',
       message: 'Output HTML file name:',
       default: 'openapi.html',
-      validate: (input) => input.endsWith('.html') || 'File must be an HTML file!',
+      validate: (input) =>
+        input.endsWith('.html') || 'File must be an HTML file!',
       when: !options.output,
-    }
+    },
   ])
 
   // 3. bundle HTML file based on the UI
   const ui = options.ui || answers.ui
-  const theme = options.theme || answers.theme
-  const title = options.title || answers.title
+  const theme = options.theme
+  const title = options.title
 
-  const template = fs.readFileSync(path.resolve(__dirname, `./resources/${ui}/template.ejs`), 'utf-8')
-  const cssContent = fs.readFileSync(path.resolve(__dirname, `./resources/${ui}/index.css`), 'utf-8')
-  const jsContent = fs.readFileSync(path.resolve(__dirname, `./resources/${ui}/index.js`), 'utf-8')
+  const template = fs.readFileSync(
+    path.resolve(__dirname, `./resources/${ui}/template.ejs`),
+    'utf-8',
+  )
+  const cssContent = fs.readFileSync(
+    path.resolve(__dirname, `./resources/${ui}/index.css`),
+    'utf-8',
+  )
+  const jsContent = fs.readFileSync(
+    path.resolve(__dirname, `./resources/${ui}/index.js`),
+    'utf-8',
+  )
 
   const input = options.input || answers.input
   const rawApiDocsText = fs.readFileSync(input, 'utf-8')
@@ -83,7 +91,9 @@ async function main() {
   } else if (fileExtension === '.yaml' || fileExtension === '.yml') {
     rawApiDocs = yaml.load(rawApiDocsText)
   } else {
-    throw new Error('Unsupported file format. Please provide a .json or .yaml/.yml file.');
+    throw new Error(
+      'Unsupported file format. Please provide a .json or .yaml/.yml file.',
+    )
   }
 
   const apiDocs = await $RefParser.dereference(rawApiDocs) // resolve $ref
@@ -104,17 +114,26 @@ async function main() {
 
 function validateOptions(options) {
   if (options.ui && !UI.includes(options.ui)) {
-    console.error(`Invalid UI (${options.ui}). Please choose from: ${UI.join(', ')}.`)
+    console.error(
+      `Invalid UI (${options.ui}). Please choose from: ${UI.join(', ')}.`,
+    )
     process.exit(1)
   }
 
-  if (options.input && !ENABLE_INPUT_EXTS.some(ext => options.input.endsWith(ext))) {
-    console.error(`Invalid input file (${options.input}). Must be a JSON or YAML file.`)
+  if (
+    options.input &&
+    !ENABLE_INPUT_EXTS.some((ext) => options.input.endsWith(ext))
+  ) {
+    console.error(
+      `Invalid input file (${options.input}). Must be a JSON or YAML file.`,
+    )
     process.exit(1)
   }
 
   if (options.output && !options.output.endsWith('.html')) {
-    console.error(`Invalid output file (${options.output}). Must be an HTML file.`)
+    console.error(
+      `Invalid output file (${options.output}). Must be an HTML file.`,
+    )
     process.exit(1)
   }
 }

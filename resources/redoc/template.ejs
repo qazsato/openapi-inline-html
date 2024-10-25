@@ -4,13 +4,14 @@
   <title><%= title %></title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui.css" />
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
+  <script src="https://unpkg.com/@stoplight/elements/web-components.min.js"></script>
   <style><%- cssContent %></style>
   <script>window.apiDocs = <%- apiDocs %></script>
 </head>
 <body>
-  <div id="swagger-ui"></div>
-  <script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-bundle.js" crossorigin></script>
+  <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"> </script>
+  <div id="redoc-container"></div>
   <script><%- jsContent %></script>
 </body>
 </html>
