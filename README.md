@@ -1,6 +1,6 @@
 # openapi-inline-html
 
-Generate inline HTML documentation from OpenAPI spec. 📗✨
+Generate standalone HTML from OpenAPI Specification. 📗✨
 
 ## Feature
 
