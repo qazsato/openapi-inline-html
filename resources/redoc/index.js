@@ -1,7 +1,7 @@
 const THEMES = ['light', 'dark']
 const themeParam = new URLSearchParams(window.location.search).get('theme')
 if (THEMES.includes(themeParam)) {
-  document.documentElement.setAttribute('data-theme', themeParam);
+  document.documentElement.setAttribute('data-theme', themeParam)
 }
 
 // refs. https://github.com/dilanx/redark
@@ -117,10 +117,10 @@ const redark = {
         color: '#a1a1aa',
         fontWeight: 'bold',
         borderBottom: '1px solid #3f3f46',
-      };
+      }
     }
   },
-};
+}
 
 let option = {}
 if (document.documentElement.getAttribute('data-theme') === 'dark') {

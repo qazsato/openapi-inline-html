@@ -9,6 +9,10 @@
     "type": "git",
     "url": "https://github.com/qazsato/openapi-inline-html.git"
   },
+  "scripts": {
+    "lint": "eslint",
+    "lint:fix": "eslint --fix"
+  },
   "keywords": [
     "OpenAPI",
     "Stoplight"
@@ -21,5 +25,13 @@
     "ejs": "^3.1.10",
     "inquirer": "^12.0.0",
     "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.13.0",
+    "eslint": "^9.13.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "globals": "^15.11.0",
+    "prettier": "^3.3.3"
   }
 }
